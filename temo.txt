@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+vector<vector<int>> findOrder(int T, vector<vector<int>>& cases) {
+    vector<vector<int>> results;
+    
+    for (int i = 0; i < T; ++i) {
+        int N = cases[i][0];
+        int X = cases[i][1];
+        vector<int> amounts(cases[i].begin() + 2, cases[i].begin() + 2 + N);
+        queue<pair<int, int>> q;
+        vector<int> order;
+
+        for (int j = 0; j < N; ++j) {
+            q.push({j + 1, amounts[j]});
+        }
+
+        while (!q.empty()) {
+            auto person = q.front();
+            q.pop();
+            int idx = person.first;
+            int amount = person.second;
+            if (amount <= X) {
+                order.push_back(idx);
+            } else {
+                q.push({idx, amount - X});
+            }
+        }
+
+        results.push_back(order);
+    }
+
+    return results;
+}
+
+int main() {
+    int T;
+    cin >> T;
+    vector<vector<int>> cases(T);
+
+    for (int i = 0; i < T; ++i) {
+        int N, X;
+        cin >> N >> X;
+        cases[i].push_back(N);
+        cases[i].push_back(X);
+        for (int j = 0; j < N; ++j) {
+            int amount;
+            cin >> amount;
+            cases[i].push_back(amount);
+        }
+    }
+
+    vector<vector<int>> orders = findOrder(T, cases);
+    for (int i = 0; i < T; ++i) {
+        cout << "Case #" << (i + 1) << ": ";
+        for (int j = 0; j < orders[i].size(); ++j) {
+            cout << orders[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
